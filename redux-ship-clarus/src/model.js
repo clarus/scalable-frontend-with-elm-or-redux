@@ -5,20 +5,17 @@ import * as RandomGifPairModel from './random-gif-pair/model';
 
 export type State = {
   counter: CounterModel.State,
-  randomGif: RandomGifModel.State,
-  randomGifPair: RandomGifPairModel.State,
+  randomGif: RandomGifModel.LocalState,
+  randomGifPair: RandomGifPairModel.LocalState,
 };
 
 export const initialState: State = {
   counter: CounterModel.initialState,
-  randomGif: RandomGifModel.initialState,
-  randomGifPair: RandomGifPairModel.initialState,
+  randomGif: RandomGifModel.initialLocalState,
+  randomGifPair: RandomGifPairModel.initialLocalState,
 };
 
 export type Action = {
-  type: 'Counter',
-  action: CounterModel.Action,
-} | {
   type: 'RandomGif',
   action: RandomGifModel.Action,
 } | {
@@ -28,21 +25,28 @@ export type Action = {
 
 export function reduce(state: State, action: Action): State {
   switch (action.type) {
-  case 'Counter':
+  case 'RandomGif': {
+    const {counter, local} = RandomGifModel.reduce({
+      counter: state.counter,
+      local: state.randomGif,
+    }, action.action);
     return {
       ...state,
-      counter: CounterModel.reduce(state.counter, action.action),
+      counter,
+      randomGif: local,
     };
-  case 'RandomGif':
+  }
+  case 'RandomGifPair': {
+    const {counter, local} = RandomGifPairModel.reduce({
+      counter: state.counter,
+      local: state.randomGifPair,
+    }, action.action);
     return {
       ...state,
-      randomGif: RandomGifModel.reduce(state.randomGif, action.action),
+      counter,
+      randomGifPair: local,
     };
-  case 'RandomGifPair':
-    return {
-      ...state,
-      randomGifPair: RandomGifPairModel.reduce(state.randomGifPair, action.action),
-    };
+  }
   default:
     return state;
   }

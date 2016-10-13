@@ -7,7 +7,7 @@ import * as Model from './model';
 
 type Props = {
   dispatch: (action: Controller.Action) => void,
-  state: Model.State,
+  state: Model.LocalState,
   tags: {
     first: string,
     second: string,

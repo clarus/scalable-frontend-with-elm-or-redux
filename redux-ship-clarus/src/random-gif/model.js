@@ -1,11 +1,17 @@
 // @flow
+import * as CounterModel from '../counter/model';
 
-export type State = {
+export type LocalState = {
   gifUrl: ?string,
   isLoading: bool,
 };
 
-export const initialState: State = {
+export type State = {
+  counter: CounterModel.State,
+  local: LocalState,
+};
+
+export const initialLocalState: LocalState = {
   gifUrl: null,
   isLoading: false,
 };
@@ -22,13 +28,22 @@ export function reduce(state: State, action: Action): State {
   case 'LoadStart':
     return {
       ...state,
-      isLoading: true,
+      local: {
+        ...state.local,
+        isLoading: true,
+      },
     };
   case 'LoadSuccess':
     return {
       ...state,
-      isLoading: false,
-      gifUrl: action.gifUrl,
+      counter: {
+        count: state.counter.count + (state.counter.count >= 10 ? 2 : 1),
+      },
+      local: {
+        ...state.local,
+        gifUrl: action.gifUrl,
+        isLoading: false,
+      },
     };
   default:
     return state;
